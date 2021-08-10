@@ -1,26 +1,32 @@
 <?php
-
-$input = [[1,6], [3,8], [5,7], [6,12]];
+// допустим, интервалы заданы часами
+$input = [[1,5], [3,8], [5,7], [6,12]];
 
 echo getMaxIntersections($input);
-echo PHP_EOL . memory_get_peak_usage();
 
+// к сожалению, до такой реализации я сам не догадался, но какая же она элегантная
+// сначала думал в лоб брать минимальный интервал и проверять, во сколько интервалов он входит
+// таким образом, мне нужно было бы знать минимальный час и максимальный час,
+// проверяя каждый интервал x+1, до x максмимального включительно, но такая реализация была бы слишком долгой
 function getMaxIntersections(array $periods) {
-    $sub1 = $sub2 = $max = $i = 0;
-    foreach ($periods as $first) {
-        if ($i > $max) {
-            $max = $i;
-        }
-        $i = 0;
-        foreach ($periods as $second) {
-            $x1 = $first[0];
-            $x2 = $first[1];
-            $x3 = $second[0];
-            $x4 = $second[1];
-            if ($x1 < $x4 && $x2 > $x3) {
-                $i++;
-            }
+    // делаем массив одномерным и помечаем начала и концы интервалов
+    $flat = [];
+    foreach ($periods as $period) {
+        $flat[] = [$period[0], 1]; // прибытие на стоянку
+        $flat[] = [$period[1], -1]; // отбытие со стоянки
+    }
+    
+    usort($flat, function($a, $b) {
+        return $a[0] === $b[0] ? ($a[1] < $b[1]) : ($a[0] - $b[0]);
+    });
+    
+    $count = $max = 0;
+    foreach ($flat as $item) {
+        $count += $item[1];
+        if ($count > $max) {
+            $max = $count;
         }
     }
+    
     return $max;
 }
