@@ -17,7 +17,7 @@ function getMaxIntersections(array $periods) {
             $x2 = $first[1];
             $x3 = $second[0];
             $x4 = $second[1];
-            if () {
+            if ($x1 < $x4 && $x2 > $x3) {
                 $i++;
             }
         }
